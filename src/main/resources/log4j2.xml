@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration status="WARN">
+    <Properties>
+        <Property name="LOG_PATTERN">%d{yyyy-MM-dd'T'HH:mm:ss.SSSZ} %p %m%n</Property>
+        <Property name="LOG_DIR">./logs</Property>
+    </Properties>
+
+    <Appenders>
+        <RollingFile
+                name="appLog"
+                fileName="${LOG_DIR}/application.log"
+                filePattern="${LOG_DIR}/application.%i.log.gz"
+                ignoreExceptions="false">
+            <PatternLayout pattern="${LOG_PATTERN}"/>
+            <Policies>
+                <SizeBasedTriggeringPolicy size="10MB" />
+            </Policies>
+            <DefaultRolloverStrategy max="5">
+                <Delete basePath="${LOG_DIR}" maxDepth="2">
+                    <IfFileName glob="*/app-*.log.gz" />
+                    <IfLastModified age="P30D" />
+                </Delete>
+            </DefaultRolloverStrategy>
+        </RollingFile>
+        <RollingFile
+                name="sparkLog"
+                fileName="${LOG_DIR}/spark.log"
+                filePattern="${LOG_DIR}/spark.%i.log.gz"
+                ignoreExceptions="false">
+            <PatternLayout pattern="${LOG_PATTERN}"/>
+            <Policies>
+                <SizeBasedTriggeringPolicy size="10MB" />
+            </Policies>
+            <DefaultRolloverStrategy max="5">
+                <Delete basePath="${LOG_DIR}" maxDepth="2">
+                    <IfFileName glob="*/spark-*.log.gz" />
+                    <IfLastModified age="P30D" />
+                </Delete>
+            </DefaultRolloverStrategy>
+        </RollingFile>
+    </Appenders>
+    <Loggers>
+        <Logger level="error" name="spark.storage" additivity="false">
+            <AppenderRef ref="sparkLog" />
+        </Logger>
+        <Logger level="error" name="spark.scheduler" additivity="false">
+            <AppenderRef ref="sparkLog" />
+        </Logger>
+        <Logger level="error" name="spark.CacheTracker" additivity="false">
+            <AppenderRef ref="sparkLog" />
+        </Logger>
+        <Logger level="error" name="spark.CacheTrackerActor" additivity="false">
+            <AppenderRef ref="sparkLog" />
+        </Logger>
+        <Logger level="error" name="spark.MapOutputTrackerActor" additivity="false">
+            <AppenderRef ref="sparkLog" />
+        </Logger>
+        <Logger level="error" name="spark.MapOutputTracker" additivity="false">
+            <AppenderRef ref="sparkLog" />
+        </Logger>
+        <Logger level="error" name="org.apache.hadoop" additivity="false">
+            <AppenderRef ref="sparkLog" />
+        </Logger>
+        <Logger level="debug" name="com.ferc.metropolis" additivity="false">
+            <AppenderRef ref="appLog" />
+        </Logger>
+        <Root level="error">
+            <AppenderRef ref="appLog"/>
+        </Root>
+
+    </Loggers>
+</Configuration>
